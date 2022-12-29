@@ -85,15 +85,19 @@ if not two_stage and do_tps:
 
 # load pretrained weights
 if two_stage and args.model!='':
-        checkpoint = torch.load(args.model, map_location=lambda storage, loc: storage)
-        checkpoint['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint['state_dict'].items()])
+    checkpoint = torch.load(args.model, map_location=lambda storage, loc: storage)
+    checkpoint['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint['state_dict'].items()])
 
-        for name, param in model.FeatureExtraction.state_dict().items():
-            model.FeatureExtraction.state_dict()[name].copy_(checkpoint['state_dict']['FeatureExtraction.' + name])    
-        for name, param in model.FeatureRegression.state_dict().items():
-            model.FeatureRegression.state_dict()[name].copy_(checkpoint['state_dict']['FeatureRegression.' + name])
-        for name, param in model.FeatureRegression2.state_dict().items():
-            model.FeatureRegression2.state_dict()[name].copy_(checkpoint['state_dict']['FeatureRegression2.' + name])
+    feature_extraction_dict = {k: v for k, v in model.FeatureExtraction.state_dict().items() if 'num_batches_tracked' not in k}
+    feature_reg_dict = {k: v for k, v in model.FeatureRegression.state_dict().items() if 'num_batches_tracked' not in k}
+    feature_reg2_dict = {k: v for k, v in model.FeatureRegression2.state_dict().items() if 'num_batches_tracked' not in k}
+
+    for name, param in feature_extraction_dict.items():
+        model.FeatureExtraction.state_dict()[name].copy_(checkpoint['state_dict']['FeatureExtraction.' + name])    
+    for name, param in feature_reg_dict.items():
+        model.FeatureRegression.state_dict()[name].copy_(checkpoint['state_dict']['FeatureRegression.' + name])
+    for name, param in feature_reg2_dict.items():
+        model.FeatureRegression2.state_dict()[name].copy_(checkpoint['state_dict']['FeatureRegression2.' + name])
             
 if two_stage and args.model=='':
     checkpoint_aff = torch.load(args.model_aff, map_location=lambda storage, loc: storage)
@@ -102,18 +106,25 @@ if two_stage and args.model=='':
     checkpoint_tps = torch.load(args.model_tps, map_location=lambda storage, loc: storage)
     checkpoint_tps['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint_tps['state_dict'].items()])
 
-    for name, param in model.FeatureRegression.state_dict().items():
+    feature_reg_dict = {k: v for k, v in model.FeatureRegression.state_dict().items() if 'num_batches_tracked' not in k}
+    feature_reg2_dict = {k: v for k, v in model.FeatureRegression2.state_dict().items() if 'num_batches_tracked' not in k}
+
+    for name, param in feature_reg_dict.items():
         model.FeatureRegression.state_dict()[name].copy_(checkpoint_aff['state_dict']['FeatureRegression.' + name])
-    for name, param in model.FeatureRegression2.state_dict().items():
+    for name, param in feature_reg2_dict.items():
         model.FeatureRegression2.state_dict()[name].copy_(checkpoint_tps['state_dict']['FeatureRegression.' + name])
         
 if not two_stage:
     model_fn = args.model_aff if do_aff else args.model_tps
     checkpoint = torch.load(model_fn, map_location=lambda storage, loc: storage)
     checkpoint['state_dict'] = OrderedDict([(k.replace('vgg', 'model'), v) for k, v in checkpoint['state_dict'].items()])
-    for name, param in model.FeatureExtraction.state_dict().items():
+
+    feature_extraction_dict = {k: v for k, v in model.FeatureExtraction.state_dict().items() if 'num_batches_tracked' not in k}
+    feature_reg_dict = {k: v for k, v in model.FeatureRegression.state_dict().items() if 'num_batches_tracked' not in k}
+
+    for name, param in feature_extraction_dict.items():
         model.FeatureExtraction.state_dict()[name].copy_(checkpoint['state_dict']['FeatureExtraction.' + name])    
-    for name, param in model.FeatureRegression.state_dict().items():
+    for name, param in feature_reg_dict.items():
         model.FeatureRegression.state_dict()[name].copy_(checkpoint['state_dict']['FeatureRegression.' + name])
 
 # Dataset and dataloader

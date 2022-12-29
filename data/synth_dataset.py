@@ -39,7 +39,7 @@ class SynthDataset(Dataset):
             self.train_data = self.train_data.iloc[0:dataset_size,:]
         self.img_names = self.train_data.iloc[:,0]
         if self.random_sample==False:
-            self.theta_array = self.train_data.iloc[:, 1:].as_matrix().astype('float')
+            self.theta_array = self.train_data.iloc[:, 1:].to_numpy().astype('float')
         # copy arguments
         self.dataset_image_path = dataset_image_path
         self.transform = transform

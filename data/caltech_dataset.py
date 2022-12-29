@@ -30,7 +30,7 @@ class CaltechDataset(Dataset):
         self.pairs = pd.read_csv(csv_file)
         self.img_A_names = self.pairs.iloc[:,0]
         self.img_B_names = self.pairs.iloc[:,1]
-        self.category = self.pairs.iloc[:,2].as_matrix().astype('float')
+        self.category = self.pairs.iloc[:,2].to_numpy().astype('float')
         self.annot_A_str = self.pairs.iloc[:, 3:5]
         self.annot_B_str = self.pairs.iloc[:, 5:]
         self.dataset_path = dataset_path         
