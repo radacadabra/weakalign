@@ -1,0 +1,1 @@
+python train_strong.py --training-dataset pascal --dataset-csv-path training_data/pascal-random/ --batch-size 32 --num-epochs 20 --result-model-fn aug_resnet_pascal_random --feature-extraction-cnn resnet101 --random-sample 1

@@ -32,9 +32,9 @@ class TSSDataset(Dataset):
         self.pairs = pd.read_csv(csv_file)
         self.img_A_names = self.pairs.iloc[:,0]
         self.img_B_names = self.pairs.iloc[:,1]
-        self.flow_direction = self.pairs.iloc[:, 2].as_matrix().astype('int')
-        self.flip_img_A = self.pairs.iloc[:, 3].as_matrix().astype('int')
-        self.pair_category = self.pairs.iloc[:, 4].as_matrix().astype('int')
+        self.flow_direction = self.pairs.iloc[:, 2].to_numpy().astype('int')
+        self.flip_img_A = self.pairs.iloc[:, 3].to_numpy().astype('int')
+        self.pair_category = self.pairs.iloc[:, 4].to_numpy().astype('int')
         self.dataset_path = dataset_path         
         self.transform = transform
         # no cuda as dataset is called from CPU threads in dataloader and produces confilct
