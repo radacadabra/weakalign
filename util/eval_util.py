@@ -327,13 +327,13 @@ def pascal_parts_metrics(batch,batch_start_idx,theta_aff,theta_tps,theta_aff_tps
 
           
         if do_aff:
-            warped_mask_aff = F.grid_sample(source_mask, grid_aff)            
+            warped_mask_aff = F.grid_sample(source_mask, grid_aff, align_corners=True)            
             stats['aff']['intersection_over_union'][idx] = intersection_over_union(warped_mask_aff,target_mask)   
         if do_tps:
-            warped_mask_tps = F.grid_sample(source_mask, grid_tps)            
+            warped_mask_tps = F.grid_sample(source_mask, grid_tps, align_corners=True)            
             stats['tps']['intersection_over_union'][idx] = intersection_over_union(warped_mask_tps,target_mask)
         if do_aff_tps:
-            warped_mask_aff_tps = F.grid_sample(source_mask, grid_aff_tps)           
+            warped_mask_aff_tps = F.grid_sample(source_mask, grid_aff_tps, align_corners=True)           
             stats['aff_tps']['intersection_over_union'][idx] = intersection_over_union(warped_mask_aff_tps,target_mask)
 
     return stats
@@ -382,7 +382,7 @@ def area_metrics(batch,batch_start_idx,theta_aff,theta_tps,theta_aff_tps,stats,a
         
         if do_aff:
             grid_aff = pointsToGrid(pt.affPointTnf(theta_aff[b,:].unsqueeze(0),grid_XY_vec))
-            warped_mask_aff = F.grid_sample(source_mask, grid_aff)            
+            warped_mask_aff = F.grid_sample(source_mask, grid_aff, align_corners=True)            
             flow_aff = th_sampling_grid_to_np_flow(source_grid=grid_aff,h_src=h_src,w_src=w_src)
             
             stats['aff']['intersection_over_union'][idx] = intersection_over_union(warped_mask_aff,target_mask)
@@ -390,7 +390,7 @@ def area_metrics(batch,batch_start_idx,theta_aff,theta_tps,theta_aff_tps,stats,a
             stats['aff']['localization_error'][idx] = localization_error(source_mask_np, target_mask_np, flow_aff)
         if do_tps:
             grid_tps = pointsToGrid(pt.tpsPointTnf(theta_tps[b,:].unsqueeze(0),grid_XY_vec))
-            warped_mask_tps = F.grid_sample(source_mask, grid_tps)
+            warped_mask_tps = F.grid_sample(source_mask, grid_tps, align_corners=True)
             flow_tps = th_sampling_grid_to_np_flow(source_grid=grid_tps,h_src=h_src,w_src=w_src)
             
             stats['tps']['intersection_over_union'][idx] = intersection_over_union(warped_mask_tps,target_mask)
@@ -398,7 +398,7 @@ def area_metrics(batch,batch_start_idx,theta_aff,theta_tps,theta_aff_tps,stats,a
             stats['tps']['localization_error'][idx] = localization_error(source_mask_np, target_mask_np, flow_tps)
         if do_aff_tps:
             grid_aff_tps = pointsToGrid(pt.affPointTnf(theta_aff[b,:].unsqueeze(0),pt.tpsPointTnf(theta_aff_tps[b,:].unsqueeze(0),grid_XY_vec)))
-            warped_mask_aff_tps = F.grid_sample(source_mask, grid_aff_tps)
+            warped_mask_aff_tps = F.grid_sample(source_mask, grid_aff_tps, align_corners=True)
             flow_aff_tps = th_sampling_grid_to_np_flow(source_grid=grid_aff_tps,h_src=h_src,w_src=w_src)
             
             stats['aff_tps']['intersection_over_union'][idx] = intersection_over_union(warped_mask_aff_tps,target_mask)

@@ -109,7 +109,7 @@ def affTpsTnf(source_image, theta_aff, theta_aff_tps, use_cuda=use_cuda):
     Xp = X*theta_aff[:,0].unsqueeze(1).unsqueeze(2)+Y*theta_aff[:,1].unsqueeze(1).unsqueeze(2)+theta_aff[:,2].unsqueeze(1).unsqueeze(2)
     Yp = X*theta_aff[:,3].unsqueeze(1).unsqueeze(2)+Y*theta_aff[:,4].unsqueeze(1).unsqueeze(2)+theta_aff[:,5].unsqueeze(1).unsqueeze(2)
     sg = torch.cat((Xp,Yp),3)
-    warped_image_batch = F.grid_sample(source_image, sg)
+    warped_image_batch = F.grid_sample(source_image, sg, align_corners=True)
 
     return warped_image_batch
 
